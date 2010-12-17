@@ -1,0 +1,13 @@
+Designed for FreeBSD with the ipfw firewall. Every 10 seconds, this looks for any failed ssh logins & blocks the originating IP address.  I always login using an SSH key (and have password authentication disabled), so any failed logins using a password or an invalid username always need to be blocked.
+
+This adds all blocking rules to a single rule number in the firewall, making disabling really easy.  It also stores the rules in my running firewall script so I an restore them at system startup.
+
+
+Setup required:
+
+Make syslog send all auth.info and authpriv.info entries to /var/log/sshauth.log.  This will be read by sshwatch.bash & used to block IP addresses. The appropriate line looks like:
+
+	auth.info;authpriv.info				/var/log/sshauth.log
+
+Then, run sshwatch.bash as root. (i.e. sudo nohup bash sshwatch.bash &)
+
