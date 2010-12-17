@@ -11,3 +11,5 @@ Make syslog send all auth.info and authpriv.info entries to /var/log/sshauth.log
 
 Then, run sshwatch.bash as root. (i.e. sudo nohup bash sshwatch.bash &)
 
+
+In a couple of weeks, this has blocked a total of 625 IP addresses that have appeared to be attempting a brute force attack on my server.  I have rules in the firewall before the blocking rule that allow IPs on my LAN and from my work IP, so those will always be able to login (and won't be accidentally blocked).
