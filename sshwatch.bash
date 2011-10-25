@@ -35,25 +35,11 @@ do
 		fi
 		if [ -n "$addr" ]
 		then
-			cp -p /root/create_firewall /root/create_firewall_new
-			echo -n > /root/create_firewall_new
-			for cmdline in `cat /root/create_firewall`
-			do
-				if [ $cmdline == "\$cmd 00100 deny all from $addr to any" ]
-				then
-					rm /root/create_firewall_new
-					break
-				fi
-				if [ $cmdline == "##########~~~~~~~~~~ NEWRULE" ]
-				then
-					echo "\$cmd 00100 deny all from $addr to any" >> /root/create_firewall_new
-					echo "\$cmd 00100 deny all from $addr to any" 
-					ipfw -q add 00100 deny all from $addr to any
-					logger -p auth.info "sshwatch.bash: Blocked address $addr"
-				fi
-				echo $cmdline >> /root/create_firewall_new
-			done
-			mv /root/create_firewall_new /root/create_firewall 2>/dev/null
+			egrep -q "^$addr\$" /etc/sshblacklist && continue
+			echo "$addr" >> /etc/sshblacklist
+			ipfw -q add 00050 drop all from $addr to any
+			ipfw -q add 00050 drop all from any to $addr
+			logger -p auth.info "sshwatch.bash: Blocked address $addr"
 		fi
 	done
 	rm sshauth-old.log
