@@ -16,12 +16,12 @@ do
 	IFS=$'\n'
 	for line in `cat sshauth-old.log`
 	do
-		if [ -n "$(echo "$line" | egrep -i 'none of user.s groups are listed in AllowGroups')" ]
+		if [ -n "$(echo "$line" | egrep -i 'none of user.s groups are listed in AllowGroups$')" ]
 		then
 			addr=$(echo "$line" | perl -p -e 's/.*User [^ ]+ from ([^ ]+) not allowed.*/$1/i')
 			echo $line >> ssh-offending.log
 			echo $addr for groups >> ssh-blocked.log
-		elif [ -n "$(echo "$line" | egrep -i 'Invalid user [^ ]+ from [^ ]+')" ]
+		elif [ -n "$(echo "$line" | egrep -i '... [0-9]+ [0-9]+:[0-9]+:[0-9]+ +sshd\[[0-9]+\]: Invalid user [^ ]+ from [^ ]+')" ]
 		then
 			addr=$(echo "$line" | perl -p -e 's/.*Invalid user [^ ]+ from ([^ ]+).*/$1/i')
 			echo $line >> ssh-offending.log
